@@ -11,6 +11,26 @@
     background: linear-gradient(rgb(58, 139, 233), rgb(227, 240, 255));
 }
 
+.hookah-effect {
+    display: none;
+    align-content: center;
+    justify-content: center;
+    position: absolute;
+    width: 500px;
+    /*height: 30px;*/
+    /*background-color: #fff;*/
+    top: calc(50% - 300px);
+    left: 50%;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    /*border: 2px solid yellow;*/
+    border-radius: 20px;
+    overflow: hidden;
+    font-size: 50px;
+    letter-spacing: 5px;
+    color: red;
+}
+
 .score-board {
     font-family: 'Press Start 2P', cursive;
     width: 100%;
@@ -22,6 +42,14 @@
 }
 
 .pipe {
+    width: 50px;
+    position: absolute;
+    bottom: 0;
+    animation: pipeAnimation 3s linear infinite;
+    transition-duration: 500ms;
+}
+
+.hookah {
     width: 50px;
     position: absolute;
     bottom: 0;
