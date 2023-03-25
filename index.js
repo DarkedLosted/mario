@@ -2,35 +2,32 @@ const mario = document.querySelector('.mario')
 const canvas = document.querySelector('.canvas')
 
 let playing = true;
-let tiresCount = 0;
+let tiresCount = Number.parseInt(localStorage.getItem("tires")) || 0;
 let gameSpeed = 300;
 const music = new Audio('https://itc.yananas.com/git/mario/assets/overworld.mp3');
 const tiresCountElem = document.querySelector('.tires-count');
 
+// init values
+tiresCountElem.innerHTML = "Tires count: " + tiresCount;
+
 document.addEventListener('keydown', e => {
-    if (!playing) location.reload()
-
-    mario.classList.add('jump')
-    setTimeout(() => {
-        mario.classList.remove('jump')
-    }, 500)
-})
-
-// music.addEventListener('canplaythrough', e => {
-//     music.play()
-// });
-
-document.addEventListener('touchstart', e => {
     if (!playing) location.reload();
 
-    audio = new Audio('https://itc.yananas.com/git/mario/assets/jump.wav');
-	audio.play(); 
+    if (!mario.className.includes('jump')) {
+        audio = new Audio('https://itc.yananas.com/git/mario/assets/jump.wav');
+        audio.play();
 
-    mario.classList.add('jump')
-    setTimeout(() => {
-        mario.classList.remove('jump')
-    }, 500)
+        mario.classList.add('jump');
+   
+        setTimeout(() => {
+            mario.classList.remove('jump');
+        }, 500);
+    }
 })
+
+const getStyleValue = (element, param) => {
+    return Number.parseFloat(window.getComputedStyle(element)[param].slice(0, -2));
+}
 
 const checkForCollision = setInterval(() => {
     const marioPosition = +window.getComputedStyle(mario).bottom.slice(0, -2)
@@ -39,7 +36,7 @@ const checkForCollision = setInterval(() => {
         const pipePosition = pipe.offsetLeft
         if (pipe.offsetLeft < -75) pipe.remove()
 
-        if (pipePosition < 70 && pipePosition > 20 && marioPosition < 65) {
+        if (pipePosition < 70 && pipePosition > 0 && marioPosition < 65) {
             pipe.style.animation = 'none'
             pipe.style.left = pipePosition + 'px'
 
@@ -73,22 +70,20 @@ const checkForCollision = setInterval(() => {
     });
 
     document.querySelectorAll('.tire').forEach(tire => {
-        const tirePosition = tire.offsetLeft
+        const tirePositionX = tire.offsetLeft;
+        const tirePositionY = getStyleValue(tire, 'bottom');
+        const marioPositionX = mario.offsetLeft;
+        const marioPositionY = getStyleValue(mario, 'bottom');
         if (tire.offsetLeft < 5) tire.remove()
 
-        if (tirePosition < 70 && tirePosition > 20 && marioPosition < 65) {
+        if (((marioPositionX < (tirePositionX + tire.width)) && ((marioPositionX + mario.width) > tirePositionX)) && ((marioPositionY < (tirePositionY + tire.height)) && ((marioPositionY + mario.height) > tirePositionY))) {
             tire.remove();
             tiresCount++;
+            localStorage.setItem("tires", tiresCount);
 
             tiresCountElem.innerHTML = "Tires count: " + tiresCount;
             audio = new Audio('https://itc.yananas.com/git/mario/assets/coin.mp3');
             audio.play();
-
-            // document.querySelectorAll('.pipe').forEach(pipe => {
-            //     const pipePosition = pipe.offsetLeft
-            //     tire.style.animation = 'none'
-            //     tire.style.left = pipePosition + 'px'
-            // })
         }
     });
 
@@ -103,10 +98,10 @@ const newPipes = setInterval(() => {
 
         canvas.appendChild(newPipe)
     }
-}, 600)
+}, 500)
 
 const newTires = setInterval(() => {
-    if (Math.random() < .4) {
+    if (Math.random() < .5) {
         const newTire = document.createElement('img')
         newTire.src = './images/tire.png'
         newTire.classList.add('tire')
@@ -115,4 +110,4 @@ const newTires = setInterval(() => {
 
         canvas.appendChild(newTire)
     }
-}, 1000);
+}, 500);

@@ -41,7 +41,7 @@
     }
 
     to {
-        left: -60px;
+        left: -75px;
     }
 }
 
@@ -56,13 +56,29 @@
 }
 
 @keyframes marioAnimation {
-
+    0% {
+        bottom: 0;
+        left: 0;
+    }
+    
     40% {
-        bottom: 120px;
+        bottom: 170px;
+    }
+
+    50% {
+        bottom: 200px;
     }
 
     60% {
-        bottom: 120px;
+        bottom: 170px;
+    }
+
+    80% {
+    }
+
+    100% {
+        bottom: 0;
+        left: 0;
     }
 
 }
