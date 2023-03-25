@@ -66,6 +66,16 @@ const checkCanSpawn = (elemA, offset) => {
     });
 };
 
+const checkCollision = (elemA, elemB) => {
+    const elemAPositionX = elemA.offsetLeft;
+    const elemAPositionY = getStyleValue(elemA, 'bottom');
+
+    const elemBPositionX = elemB.offsetLeft - 30;
+    const elemBPositionY = getStyleValue(elemB, 'bottom') - 30;
+
+    return (elemA !== elemB) && (((elemAPositionX < (elemBPositionX + elemB.width)) && ((elemAPositionX + elemA.width) > elemBPositionX)) && ((elemAPositionY < (elemBPositionY + elemB.height)) && ((elemAPositionY + elemA.height) > elemBPositionY)));
+}
+
 const getStyleValue = (element, param) => {
     return Number.parseFloat(window.getComputedStyle(element)[param].slice(0, -2));
 };
@@ -205,7 +215,7 @@ const getStyleValue = (element, param) => {
 
         canvas.appendChild(newPipe)
 
-        if (!checkCanSpawn(newPipe, 100)) {
+        if (!checkCanSpawn(newPipe, 150)) {
             newPipe.remove();
         }
     }
@@ -222,13 +232,13 @@ const getStyleValue = (element, param) => {
 
         canvas.appendChild(newPipe)
 
-        if (!checkCanSpawn(newPipe, 80)) {
+        if (!checkCanSpawn(newPipe, 20)) {
             newPipe.remove();
         }
     }
 
 
-}, 500)
+}, 2000)
 
         const newTires = setInterval(() => {
             const newTire = document.createElement('img');
@@ -241,7 +251,7 @@ const getStyleValue = (element, param) => {
 
         canvas.appendChild(newTire)
 
-        if (!checkCanSpawn(newTire, 80)) {
+        if (!checkCanSpawn(newTire, 20)) {
             newTire.remove();
         }
     }
