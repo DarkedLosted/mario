@@ -8,7 +8,7 @@ const HOOKAH_EFFECT_MS = 11000;
 let underHookahEffect = false;
 
 let playing = true;
-let tiresCount = Number.parseInt(localStorage.getItem("tires")) || 0;
+let tiresCount = 0;
 let gameSpeed = 300;
 const music = new Audio('https://itc.yananas.com/git/mario/assets/overworld.mp3');
 const tiresCountElem = document.querySelector('.tires-count');
@@ -18,7 +18,8 @@ tiresCountElem.innerHTML = "Tires count: " + tiresCount;
 
 document.addEventListener('keydown', e => {
     if (!playing) {
-        location.reload()
+        location.reload();
+        bgMusic.play();
     }
 
     if (!docLoaded) {
@@ -37,6 +38,42 @@ document.addEventListener('keydown', e => {
         }, 500)
     }
 })
+
+function rand(min, max, step) {
+    var delta,
+        range,
+        rand;
+
+    if (arguments.length < 2) {
+        max = min;
+        min = 0;
+    }
+    if (!step) {
+        step = 1;
+    }
+
+    delta = max - min;
+    range = delta / step;
+    rand = Math.random();
+    rand *= range;
+    rand = Math.floor(rand);
+    rand *= step;
+    rand += min;
+
+    return rand;
+}
+
+const checkCanSpawn = (elemA, offset) => {
+    const elemAPositionX = elemA.offsetLeft;
+    const elemAPositionY = getStyleValue(elemA, 'bottom');
+
+    return !Array.from(document.getElementsByTagName('img')).some((elemB) => {
+        const elemBPositionX = elemB.offsetLeft;
+        const elemBPositionY = getStyleValue(elemB, 'bottom');
+
+        return (elemA !== elemB) && (((elemAPositionX < (elemBPositionX + elemB.width + offset)) && ((elemAPositionX + elemA.width) > elemBPositionX)) && ((elemAPositionY < (elemBPositionY + elemB.height + offset)) && ((elemAPositionY + elemA.height) > elemBPositionY)));
+    });
+};
 
 const getStyleValue = (element, param) => {
     return Number.parseFloat(window.getComputedStyle(element)[param].slice(0, -2));
@@ -81,6 +118,7 @@ const checkForCollision = setInterval(() => {
                 audio = new Audio('https://itc.yananas.com/git/mario/assets/die.wav');
                 audio.play();
                 music.pause();
+                bgMusic.pause();
 
                 playing = false;
                 clearInterval(checkForCollision)
@@ -109,7 +147,6 @@ const checkForCollision = setInterval(() => {
         if (((marioPositionX < (tirePositionX + tire.width)) && ((marioPositionX + mario.width) > tirePositionX)) && ((marioPositionY < (tirePositionY + tire.height)) && ((marioPositionY + mario.height) > tirePositionY))) {
             tire.remove();
             tiresCount++;
-            localStorage.setItem("tires", tiresCount);
 
             tiresCountElem.innerHTML = "Tires count: " + tiresCount;
             audio = new Audio('https://itc.yananas.com/git/mario/assets/coin.mp3');
@@ -145,47 +182,59 @@ const checkForCollision = setInterval(() => {
                 bgMusic.play();
                 underHookahEffect = false;
             }, HOOKAH_EFFECT_MS);
-
-            // document.querySelectorAll('.pipe').forEach(pipe => {
-            //     const pipePosition = pipe.offsetLeft
-            //     tire.style.animation = 'none'
-            //     tire.style.left = pipePosition + 'px'
-            // })
         }
     });
 
 }, 10)
 
 const newPipes = setInterval(() => {
-    if (Math.random() < .4) {
-        const newPipe = document.createElement('img')
+    const newPipe = document.createElement('img');
+
+    if (Math.random() < .5) {
         newPipe.src = './images/pipe.png'
         newPipe.classList.add('pipe')
         newPipe.style.animationDuration = window.innerWidth / gameSpeed + 's'
 
         canvas.appendChild(newPipe)
+
+        if (!checkCanSpawn(newPipe, 100)) {
+            newPipe.remove();
+        }
     }
 }, 500)
 
 const newHookahs = setInterval(() => {
+    const newPipe = document.createElement('img');
+
     if (Math.random() < .3 && !underHookahEffect) {
-        const newPipe = document.createElement('img')
         newPipe.src = './images/hookah.png'
         newPipe.classList.add('hookah')
+        newPipe.style.bottom = Math.random() * rand(0, 200, 25) + 'px';
         newPipe.style.animationDuration = window.innerWidth / gameSpeed + 's'
 
         canvas.appendChild(newPipe)
+
+        if (!checkCanSpawn(newPipe, 80)) {
+            newPipe.remove();
+        }
     }
+
+
 }, 2000)
 
 const newTires = setInterval(() => {
-    if (Math.random() < .5) {
-        const newTire = document.createElement('img')
-        newTire.src = './images/tire.png'
+    const newTire = document.createElement('img');
+
+    if (Math.random() < .4) {
+        newTire.src = './images/tire1.gif'
         newTire.classList.add('tire')
-        newTire.style.bottom = Math.random() * 100 + 'px';
+        newTire.style.bottom = Math.random() * rand(0, 200, 25) + 'px';
         newTire.style.animationDuration = window.innerWidth / gameSpeed + 's'
 
         canvas.appendChild(newTire)
+
+        if (!checkCanSpawn(newTire, 80)) {
+            newTire.remove();
+        }
     }
 }, 500);
