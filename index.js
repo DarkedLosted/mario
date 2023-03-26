@@ -9,7 +9,7 @@ let underHookahEffect = false;
 
 let playing = true;
 let tiresCount = 0;
-let gameSpeed = 300;
+let gameSpeed = 500;
 const tiresCountElem = document.querySelector('.tires-count');
 
 // init values
@@ -95,7 +95,7 @@ const getStyleValue = (element, param) => {
 
             document.querySelectorAll('.pipe').forEach(pipe => {
                 const pipePosition = pipe.offsetLeft
-                if (pipe.offsetLeft < -75) pipe.remove()
+                if (pipe.offsetLeft < 5) pipe.remove()
 
                 if (pipePosition < 70 && pipePosition > 0 && marioPosition < 65) {
                     if (!underHookahEffect) {
@@ -208,18 +208,18 @@ const getStyleValue = (element, param) => {
         const newPipes = setInterval(() => {
             const newPipe = document.createElement('img');
 
-    if (Math.random() < .5) {
+    if (Math.random() <= .7) {
                 newPipe.src = './images/pipe.png'
                 newPipe.classList.add('pipe')
                 newPipe.style.animationDuration = window.innerWidth / gameSpeed + 's'
 
         canvas.appendChild(newPipe)
 
-        if (!checkCanSpawn(newPipe, 150)) {
+        if (!checkCanSpawn(newPipe, 120)) {
             newPipe.remove();
         }
     }
-}, 500)
+}, 550)
 
         const newHookahs = setInterval(() => {
             const newPipe = document.createElement('img');
